@@ -12,9 +12,10 @@ library(dplyr)
 library(magrittr)
 library(dplyr)
 library(readr)
-library(plotly)
+library(ggplot2)
 
-ml_records = read_csv('/Users/ghum-m-ae231206/odis-exporter/2024-01-16_ml_sources_table.csv')
+
+ml_records = read_csv('https://raw.githubusercontent.com/studium-ai/manuale-lovaniense/main/2024-01-16_ml_sources_table.csv')
 
 
 ml_records %>% 
