@@ -1,65 +1,59 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
-
 library(shiny)
-library(dplyr)
-library(magrittr)
-library(dplyr)
-library(readr)
-library(ggplot2)
 
-
-ml_records = read_csv('https://raw.githubusercontent.com/studium-ai/manuale-lovaniense/main/2024-01-16_ml_sources_table.csv')
-
-
-ml_records %>% 
-  group_by(y1, format) %>% 
-  summarise(n = n()) %>%
-  filter(y1 %in% 1450:1800) %>% 
-  ggplot() + geom_col(aes(y1, n, fill = format))
-
-# Define UI for application that draws a histogram
+# Define UI for app that draws a histogram ----
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1400,
-                        max = 1800,
-                        value = c(1400,1800))
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+  
+  # App title ----
+  titlePanel("Hello Shiny!"),
+  
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+    
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+      
+      # Input: Slider for the number of bins ----
+      sliderInput(inputId = "bins",
+                  label = "Number of bins:",
+                  min = 1,
+                  max = 50,
+                  value = 30)
+      
+    ),
+    
+    # Main panel for displaying outputs ----
+    mainPanel(
+      
+      # Output: Histogram ----
+      plotOutput(outputId = "distPlot")
+      
     )
+  )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw a histogram ----
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-      
-      
-      ml_records %>% filter(y1 >= input$bins[1]  & y1 <= input$bins[2]) %>% 
-        group_by(y1, format) %>% 
-        summarise(n = n()) %>%
-        filter(y1 %in% 1450:1800) %>% 
-        ggplot() + geom_col(aes(y1, n, fill = format))
-    })
+  
+  # Histogram of the Old Faithful Geyser Data ----
+  # with requested number of bins
+  # This expression that generates a histogram is wrapped in a call
+  # to renderPlot to indicate that:
+  #
+  # 1. It is "reactive" and therefore should be automatically
+  #    re-executed when inputs (input$bins) change
+  # 2. Its output type is a plot
+  output$distPlot <- renderPlot({
+    
+    x    <- faithful$waiting
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    
+    hist(x, breaks = bins, col = "#75AADB", border = "white",
+         xlab = "Waiting time to next eruption (in mins)",
+         main = "Histogram of waiting times")
+    
+  })
+  
 }
 
-# Run the application 
+# Create Shiny app ----
 shinyApp(ui = ui, server = server)
